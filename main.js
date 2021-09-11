@@ -1,3 +1,5 @@
+///////////////////////////////////////////// HTML Foundation /////////////////////////////////////////////////////
+
 //header element with the title
 const h1 = document.createElement('h1');
 h1.setAttribute('style', 'color:purple')
@@ -9,19 +11,24 @@ var ink = 'black';
 let color = 'white';
 let size = 256;
 
-//div to wrap the pixel container
-const board = document.createElement('div');
-board.id = "board"
-document.body.appendChild(board);
+//div to wrap pixelContainer
+const pixelBoard = document.createElement('div');
+pixelBoard.id = "pixelBoard"
+document.body.appendChild(pixelBoard);
+
+//div to wrap pigmentContainer
+const pigmentBoard = document.createElement('div');
+pigmentBoard.id = 'pigmentBoard';
+document.body.appendChild(pigmentBoard);
 
 ////////////////////////////////////////////////////// Element Constructors //////////////////////////////////////
 
-//constructs pixel contianer into the board
+//constructs pixel contianer into pixelBoard
 const pixelConstructor = function(size) {
     //Container for pixel divs
     const pixelContainer = document.createElement('div');
     pixelContainer.setAttribute('id', 'pixelContainer');
-    board.appendChild(pixelContainer);
+    pixelBoard.appendChild(pixelContainer);
 
     //Creating multiple pixels as divs, in the container
     for (i = 0; i < size; i++) {
@@ -30,15 +37,14 @@ const pixelConstructor = function(size) {
     }
 };
 
-
-//Constructs pigment container into the body
+//Constructs pigment container into pigmentBoard
 const pigmentConstructor = function(colorMode) {
     //Container for pigment divs
     const pigmentContainer = document.createElement('div');
     pigmentContainer.setAttribute('id', 'pigmentContainer');
-    document.body.appendChild(pigmentContainer);
+    pigmentBoard.appendChild(pigmentContainer);
 
-    //randomize HSL color values
+    //generate randomized HSL color values
     const randomColor = function(colorMode) {
         let h = Math.round(Math.random() * 359);
         let s = Math.round(Math.random() * 100);
@@ -63,15 +69,15 @@ const pigmentConstructor = function(colorMode) {
     })
 };
 
-///////////////////////////////////////////////////// startup calls /////////////////////////////////////////////
+///////////////////////////////////////////////////// Startup calls /////////////////////////////////////////////
 
-//Draws a default 16x16 pixel grid at startup
+//Draw a default 16x16 pixel grid at startup
 pixelConstructor(256);
 
 //Draw a default pigment grid
 pigmentConstructor('colorful');
 
-/////////////////////////////////////////////////// control buttons /////////////////////////////////////////////
+/////////////////////////////////////////////////// Control buttons /////////////////////////////////////////////
 
 //container for buttons
 const controls = document.createElement('div');
@@ -102,28 +108,31 @@ controls.appendChild(monoBtn);
 
 /////////////////////////////////////////////// listeners for mouse events ////////////////////////////////////
 
+const pixelListener = function() {
+    //updates status of mouseIsDown
 var mouseIsDown = false;
-//updates status of mouseIsDown
 pixelContainer.addEventListener('mousedown', event => {
     event.stopPropagation();
     mouseIsDown = true
 });
-
-//mouseup listener for pixelContainer, changes color of pixels when mouse button is up
-pixelContainer.addEventListener('mouseup', event => {
-    event.stopPropagation();
-    event.target.style.backgroundColor = ink
-    mouseIsDown = false
-});
-
-//mouse move listener for pixelContainer, changes color of pixels while mouse moves over
-pixelContainer.addEventListener('mousemove', event => {
-    event.stopPropagation();
-    if (mouseIsDown) {
+    //mouseup listener for pixelContainer, changes color of pixels when mouse button is up
+    pixelContainer.addEventListener('mouseup', event => {
+        event.stopPropagation();
         event.target.style.backgroundColor = ink;
-        //console.log(event.target)
-    }
-});
+        mouseIsDown = false
+    });
+
+    //mouse move listener for pixelContainer, changes color of pixels while mouseIsDown is true and mouse moves over
+    pixelContainer.addEventListener('mousemove', event => {
+        event.stopPropagation();
+        if (mouseIsDown) {
+            event.target.style.backgroundColor = ink;
+        }
+    })
+};
+
+//Load listeners to register events pixels
+pixelListener();
 
 //mouse click listener for erase button, changes ink color to default
 eraseBtn.addEventListener('click', event => ink = 'white')
@@ -132,6 +141,7 @@ eraseBtn.addEventListener('click', event => ink = 'white')
 clearBtn.addEventListener('click', event => {
     pixelContainer.parentNode.removeChild(pixelContainer);
     pixelConstructor(256);
+    pixelListener()
 });
 
 //mouse click listener for colorful button, deletes current pigmentContainer and re-calls pigmentConstructor
