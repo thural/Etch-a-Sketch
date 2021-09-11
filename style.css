@@ -1,0 +1,25 @@
+#board{
+  border: 4px solid black;
+  max-width: 640px;
+}
+
+#pixelContainer{
+  display:grid;
+  /*max-width: 640px;*/
+  grid-template:repeat(16,40px)/repeat(16,40px);
+  /*grid-column-gap:4px;
+  grid-row-gap:4px;*/
+}
+
+#controls{
+  min-height: 72px;
+  width: 640px;
+  /*background-color: purple;*/
+}
+
+#pigmentContainer{
+  display:grid;
+  max-width: 640px;
+  grid-template: repeat(4,20px)/repeat(32,20px);
+  border: 4px solid black;
+}
