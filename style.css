@@ -1,25 +1,43 @@
+#mainContainer{
+  display: block; 
+  margin: 0, auto;
+  padding: 0;
+}
+
 #pixelBoard{
-  border: 4px solid black;
+  /*border: 4px solid white;*/
+  margin: auto;
   max-width: 640px;
+  box-shadow: 0 10px 18px rgba(0,0,0,0.5), 0 6px 6px rgba(0,0,0,0.25);
 }
 
 #pixelContainer{
   display:grid;
-  /*max-width: 640px;*/
-  grid-template:repeat(16,40px)/repeat(16,40px);
-  /*grid-column-gap:4px;
-  grid-row-gap:4px;*/
 }
 
-#controls{
-  min-height: 72px;
-  width: 640px;
-  /*background-color: purple;*/
+#pigmentBoard{
+  max-width: 640px;
+  margin: auto;
+  box-shadow: 0 10px 18px rgba(0,0,0,0.5), 0 6px 6px rgba(0,0,0,0.25);
 }
 
 #pigmentContainer{
   display:grid;
-  max-width: 640px;
   grid-template: repeat(4,20px)/repeat(32,20px);
-  border: 4px solid black;
+}
+
+#pixelControlBoard{
+  display: flex;
+  margin: 0px auto;
+  justify-content: center;
+}
+
+#pigmentControlBoard{
+  display: flex;
+  margin: 0px auto;
+  justify-content: center;
+}
+
+button{
+  margin: 8px 4px;
 }

@@ -8,33 +8,54 @@ document.body.appendChild(h1);
 
 //Default global values
 var ink = 'black';
+var currentSize = 16;
 let color = 'white';
-let size = 256;
+let size = 16;
+
+//main container
+const container = document.createElement('div');
+container.id = 'mainContainer';
+container.className = 'center';
+document.body.appendChild(container);
 
 //div to wrap pixelContainer
 const pixelBoard = document.createElement('div');
 pixelBoard.id = "pixelBoard"
-document.body.appendChild(pixelBoard);
+container.appendChild(pixelBoard);
+
+//div for pixel controls
+const pixelControlBoard = document.createElement('div');
+pixelControlBoard.id = 'pixelControlBoard';
+container.appendChild(pixelControlBoard);
 
 //div to wrap pigmentContainer
 const pigmentBoard = document.createElement('div');
 pigmentBoard.id = 'pigmentBoard';
-document.body.appendChild(pigmentBoard);
+container.appendChild(pigmentBoard);
+
+//div for pigment controls
+const pigmentControlBoard = document.createElement('div');
+pigmentControlBoard.id = 'pigmentControlBoard';
+container.appendChild(pigmentControlBoard);
 
 ////////////////////////////////////////////////////// Element Constructors //////////////////////////////////////
 
-//constructs pixel contianer into pixelBoard
+//constructs pixel contianer in pixelBoard
 const pixelConstructor = function(size) {
     //Container for pixel divs
     const pixelContainer = document.createElement('div');
     pixelContainer.setAttribute('id', 'pixelContainer');
     pixelBoard.appendChild(pixelContainer);
-
-    //Creating multiple pixels as divs, in the container
-    for (i = 0; i < size; i++) {
+    //Pixel numbers for the pixelgenerator below
+    let pixelNums = size * size;
+    //Generating multiple pixels as divs, in the container
+    for (i = 0; i < pixelNums; i++) {
         const pixel = document.createElement('pixel');
         pixelContainer.appendChild(pixel);
     }
+    //Set grid style according to pixel numbers
+    pixelContainer.setAttribute('style', `grid-template:repeat(${size},${640/size}px)/repeat(${size},${640/size}px)`)
+    currentSize = size
 };
 
 //Constructs pigment container into pigmentBoard
@@ -69,52 +90,66 @@ const pigmentConstructor = function(colorMode) {
     })
 };
 
-///////////////////////////////////////////////////// Startup calls /////////////////////////////////////////////
+///////////////////////////////////////////////////// Startup Calls /////////////////////////////////////////////
 
 //Draw a default 16x16 pixel grid at startup
-pixelConstructor(256);
+pixelConstructor(16);
 
-//Draw a default pigment grid
+//Draw a default pigment grid at startup
 pigmentConstructor('colorful');
 
-/////////////////////////////////////////////////// Control buttons /////////////////////////////////////////////
+/////////////////////////////////////////////////// Control Buttons /////////////////////////////////////////////
 
-//container for buttons
-const controls = document.createElement('div');
-document.body.appendChild(controls);
-controls.id = "controls";
+//pixel mode button for 16x16 pixels
+const pixelModeOne = document.createElement('button');
+pixelModeOne.textContent = '16x16';
+pixelControlBoard.appendChild(pixelModeOne);
+
+//pixel mode button for 32x32 pixels
+const pixelModeTwo = document.createElement('button');
+pixelModeTwo.textContent = '32x32';
+pixelControlBoard.appendChild(pixelModeTwo);
+
+//pixel mode button for 64x64 pixels
+const pixelModeThree = document.createElement('button');
+pixelModeThree.textContent = '64x64';
+pixelControlBoard.appendChild(pixelModeThree);
+
+//pixel mode button for custom pixel size
+const pixelModeCustom = document.createElement('button');
+pixelModeCustom.textContent = 'Custom';
+pixelControlBoard.appendChild(pixelModeCustom);
 
 //erase button inside the controls div
 const eraseBtn = document.createElement('button');
 eraseBtn.textContent = 'Erase';
-controls.appendChild(eraseBtn);
-
+pigmentControlBoard.appendChild(eraseBtn);
 
 //clear button inside the controls div
 const clearBtn = document.createElement('button');
 clearBtn.textContent = 'Clear';
-controls.appendChild(clearBtn);
-
+pigmentControlBoard.appendChild(clearBtn);
 
 //colorful button
 const colorBtn = document.createElement('button');
 colorBtn.textContent = 'Colorful';
-controls.appendChild(colorBtn);
+pigmentControlBoard.appendChild(colorBtn);
 
 //monochrome button
 const monoBtn = document.createElement('button');
 monoBtn.textContent = 'Monochrome';
-controls.appendChild(monoBtn);
+pigmentControlBoard.appendChild(monoBtn);
 
-/////////////////////////////////////////////// listeners for mouse events ////////////////////////////////////
+/////////////////////////////////////////////// Listeners for Mouse Events ////////////////////////////////////
 
+//function to load listeners for pixelContainer
 const pixelListener = function() {
     //updates status of mouseIsDown
-var mouseIsDown = false;
-pixelContainer.addEventListener('mousedown', event => {
-    event.stopPropagation();
-    mouseIsDown = true
-});
+    var mouseIsDown = false;
+    pixelContainer.addEventListener('mousedown', event => {
+        event.stopPropagation();
+        mouseIsDown = true
+    });
     //mouseup listener for pixelContainer, changes color of pixels when mouse button is up
     pixelContainer.addEventListener('mouseup', event => {
         event.stopPropagation();
@@ -122,36 +157,69 @@ pixelContainer.addEventListener('mousedown', event => {
         mouseIsDown = false
     });
 
-    //mouse move listener for pixelContainer, changes color of pixels while mouseIsDown is true and mouse moves over
+    //mousemove listener for pixelContainer, changes color of pixels while mouseIsDown is true
     pixelContainer.addEventListener('mousemove', event => {
         event.stopPropagation();
-        if (mouseIsDown) {
-            event.target.style.backgroundColor = ink;
-        }
+        mouseIsDown ? event.target.style.backgroundColor = ink : null
     })
 };
 
-//Load listeners to register events pixels
+//Call listeners to register events on pixels
 pixelListener();
 
-//mouse click listener for erase button, changes ink color to default
+//click listener for erase button, changes ink color to default
 eraseBtn.addEventListener('click', event => ink = 'white')
 
-//mouse click listener for clear button, deletes current pixelContainer and re-calls pixelConstructor
+//click listener for clear button, deletes current pixelContainer and re-calls pixelConstructor
 clearBtn.addEventListener('click', event => {
     pixelContainer.parentNode.removeChild(pixelContainer);
-    pixelConstructor(256);
+    pixelConstructor(currentSize);
+    //Listeners should be re-called every time if pixelContainer is re-built
     pixelListener()
 });
 
-//mouse click listener for colorful button, deletes current pigmentContainer and re-calls pigmentConstructor
+//click listener for colorful button, deletes current pigmentContainer and re-calls pigmentConstructor
 colorBtn.addEventListener('click', event => {
     pigmentContainer.parentNode.removeChild(pigmentContainer);
     pigmentConstructor('colorful')
 });
 
-//mouse click listener for monochrome button, deletes current pigmentContainer and re-calls pigmentConstructor
+//click listener for monochrome button, deletes current pigmentContainer and re-calls pigmentConstructor
 monoBtn.addEventListener('click', event => {
     pigmentContainer.parentNode.removeChild(pigmentContainer);
     pigmentConstructor('monochrome')
+});
+
+//click listener for the button to re-build the pixelContainer with the defined size
+pixelModeOne.addEventListener('click', event => {
+    pixelContainer.parentNode.removeChild(pixelContainer);
+    pixelConstructor(16);
+    pixelListener()
+});
+
+//click listener for the button to re-build the pixelContainer with the defined size
+pixelModeTwo.addEventListener('click', event => {
+    pixelContainer.parentNode.removeChild(pixelContainer);
+    pixelConstructor(32);
+    pixelListener()
+});
+
+//click listener for the button to re-build the pixelContainer with the defined size
+pixelModeThree.addEventListener('click', event => {
+    pixelContainer.parentNode.removeChild(pixelContainer);
+    pixelConstructor(64);
+    pixelListener()
+});
+
+//click listener for the button to re-build the pixelContainer with custom size
+pixelModeCustom.addEventListener('click', event => {
+    do {
+        size = Number(prompt('Enter a value not higher than 100'));
+        console.log(size);
+        if (size == null || size == undefined) break
+    } while (!(size == false) && size > 100);
+    pixelContainer.parentNode.removeChild(pixelContainer);
+    size ? pixelConstructor(size) : pixelConstructor(16);
+    pixelListener()
+
 });
