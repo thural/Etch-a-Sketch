@@ -5,11 +5,6 @@ var ink = 'black';
 var currentSize = 16;
 let size = 16;
 
-//header element with the title
-const h1 = document.createElement('h1');
-h1.setAttribute('style', 'color:purple');
-h1.textContent = 'Etch A Sketch';
-document.body.appendChild(h1);
 //main container
 const container = document.createElement('div');
 container.setAttribute('class', 'unselectable')
